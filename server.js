@@ -42,6 +42,8 @@ const Password=process.env.PG_PASSWORD;
 const Host=process.env.PG_HOST;
 const Port=process.env.PG_HOST;
 const url =`postgres://${UserName}:${Password}@${Host}.oregon-postgres.render.com/${DataBase}?ssl=true`;
+//const url='postgresql://reem:1200@localhost:5432/movie_db'
+//const url =`postgres://movies_ci4d_user:duwOHTLjKvfb0Nx4CT6ahVN6fKXmN6Vr@dpg-cos9dd21hbls73fgg4q0-a.oregon-postgres.render.com/movies_ci4d?ssl=true`;
 const client=new pg.Client(url);
 
 
@@ -254,16 +256,15 @@ app.get('/viewmovies',(req,res)=>{
 
 //Lab14
 
-//routs
+
 app.put('/update/:id',updateHandeler);
 app.delete('/delete/:id',deleteHandeler);
-app.get('/getmovie',getmovieHandeler);
-
+app.get('/getmovie/:id', getmovieHandeler);
 
 
 
 //functions
-function updateHandeler(req, res) {
+function updateHandeler(req,res) {
     //const id=req.params.id;
     const {title, release_date, poster_path, overview } = req.body;
     let ID = req.params.id;
@@ -289,10 +290,10 @@ function updateHandeler(req, res) {
 
 function deleteHandeler(req, res) {
     const { id } = req.params;
-    const values = [id];
+    const ID = [id];
     const sql = 'DELETE FROM movie WHERE id = $1';
 
-    client.query(sql, values)
+    client.query(sql, ID)
         .then(result => {
                 console.log('Movie deleted:', result.rows);
                 res.status(204).send('Deleted');
@@ -306,20 +307,21 @@ function deleteHandeler(req, res) {
 
 
 
-function getmovieHandeler(req,res){
-    let id=req.params.id;
-    let values=[id];
-    let sql=`SELECT * FROM movie
-    WHERE id=$1;`
-    client.query(sql,values).then(result=>{
+function getmovieHandeler(req, res) {
+    const { id } = req.params;
+    const sql = `SELECT * FROM movie WHERE id = $1`;
+
+    client.query(sql, [id]).then(result => {
         console.log(result.rows);
-        res.status(200).send(result.rows)
-    }).catch(err=>{
-        console.error('Error getting a movie:', err);
-            res.status(500).send('Error getting movie');
- }
-    )
+        res.status(200).json(result.rows);
+    }).catch(err => {
+        console.error('Getting movie failed:', err);
+        res.status(500).send('Getting movie failed');
+    });
 }
+
+
+
 
 
 
