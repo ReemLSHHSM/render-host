@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 //require pg
-//const {Client}=require('pg');
+const pg=require('pg');
 
 //url of database i want to connect with
 const url = process.env.URL;
