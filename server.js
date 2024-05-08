@@ -35,13 +35,14 @@ app.use(bodyParser.json())
 const pg=require('pg');
 
 //url of database i want to connect with
-const url = process.env.URL;
+
 const DataBase=process.env.PG_DATABASE;
 const UserName=process.env.PG_USER;
 const Password=process.env.PG_PASSWORD;
 const Host=process.env.PG_HOST;
 const Port=process.env.PG_HOST;
-const client=new pg.Client(`postgressql://${UserName}:${Password}@${Host}:${Port}/${DataBase}`);
+const url =`postgres://${UserName}:${Password}@${Host}.oregon-postgres.render.com/${DataBase}?ssl=true`;
+const client=new pg.Client(url);
 
 
 //..........................................................................................................................
